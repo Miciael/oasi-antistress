@@ -24,7 +24,6 @@ function resumeAudio() {
 // SINTETIZZATORI AUDIO PROCEDURALI AVANZATI
 // ==========================================
 
-// 1. SQUISHY CON SCHIUMA / MEMORY FOAM
 function playSquishySound() {
   resumeAudio();
   const now = audioCtx.currentTime;
@@ -93,7 +92,6 @@ function playSquishySound() {
   osc.stop(now + duration);
 }
 
-// 2. TASTIERA MECCANICA: SUONO ULTRA-CREMOSO MASSIMO
 function playSoftThock() {
   resumeAudio();
   const now = audioCtx.currentTime;
@@ -162,7 +160,6 @@ function playSoftThock() {
   lubeNoise.stop(now + 0.025);
 }
 
-// 3. POP-IT: RUMORE CLASSICO E PURO IN SILICONE
 function playPopItSound() {
   resumeAudio();
   const now = audioCtx.currentTime;
@@ -216,19 +213,19 @@ function playPopItSound() {
   popOsc.stop(now + 0.03);
 }
 
-// --- LOGICA SQUISHY STABILE (CENTRO FISSO + LIMITE DOPPIO) ---
+// --- SQUISHY ---
 const canvas = document.getElementById('squishy-canvas');
 const ctx = canvas.getContext('2d');
-canvas.width = 280;
-canvas.height = 280;
+canvas.width = 260;
+canvas.height = 260;
 
 const numPoints = 24;
-const baseRadius = 70;
-const center = { x: 140, y: 140 };
+const baseRadius = 65;
+const center = { x: 130, y: 130 };
 let points = [];
 let isDraggingSquishy = false;
 let currentFace = '😌';
-let mousePos = { x: 140, y: 140 };
+let mousePos = { x: 130, y: 130 };
 
 for (let i = 0; i < numPoints; i++) {
   const angle = (i / numPoints) * Math.PI * 2;
@@ -277,7 +274,7 @@ canvas.addEventListener('touchstart', (e) => {
   updateMousePos(touch.clientX - rect.left, touch.clientY - rect.top);
   playSquishySound();
   e.preventDefault();
-});
+}, { passive: false });
 
 canvas.addEventListener('touchmove', (e) => {
   if (isDraggingSquishy) {
@@ -286,7 +283,7 @@ canvas.addEventListener('touchmove', (e) => {
     updateMousePos(touch.clientX - rect.left, touch.clientY - rect.top);
   }
   e.preventDefault();
-});
+}, { passive: false });
 
 window.addEventListener('touchend', () => {
   if (isDraggingSquishy) {
@@ -301,7 +298,7 @@ function updateMousePos(mx, my) {
   const pullY = my - center.y;
   let pullDist = Math.sqrt(pullX * pullX + pullY * pullY);
   
-  const maxLimit = 70;
+  const maxLimit = 65;
   if (pullDist > maxLimit) {
     const angle = Math.atan2(pullY, pullX);
     mousePos.x = center.x + Math.cos(angle) * maxLimit;
@@ -345,7 +342,7 @@ function animateSquishy() {
 
   ctx.beginPath();
   const shadowScale = isDraggingSquishy ? 0.85 : 1.0;
-  ctx.ellipse(center.x, center.y + 75, 60 * shadowScale, 14, 0, 0, Math.PI * 2);
+  ctx.ellipse(center.x, center.y + 70, 55 * shadowScale, 12, 0, 0, Math.PI * 2);
   ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
   ctx.fill();
 
@@ -360,26 +357,26 @@ function animateSquishy() {
     ctx.quadraticCurveTo(current.x, current.y, xc, yc);
   }
 
-  const grad = ctx.createRadialGradient(center.x - 20, center.y - 20, 10, center.x, center.y, 80);
+  const grad = ctx.createRadialGradient(center.x - 20, center.y - 20, 10, center.x, center.y, 75);
   grad.addColorStop(0, '#fbcfe8');
   grad.addColorStop(0.6, '#ec4899');
   grad.addColorStop(1, '#be123d');
 
   ctx.fillStyle = grad;
   ctx.shadowColor = 'rgba(236, 72, 153, 0.45)';
-  ctx.shadowBlur = 20;
+  ctx.shadowBlur = 15;
   ctx.fill();
   ctx.shadowBlur = 0;
 
   ctx.beginPath();
-  ctx.ellipse(center.x - 28, center.y - 28, 18, 10, -Math.PI / 4, 0, Math.PI * 2);
+  ctx.ellipse(center.x - 25, center.y - 25, 16, 9, -Math.PI / 4, 0, Math.PI * 2);
   ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
   ctx.fill();
 
   const faceOffsetX = (mousePos.x - center.x) * 0.15;
   const faceOffsetY = (mousePos.y - center.y) * 0.15;
 
-  ctx.font = '40px Plus Jakarta Sans, sans-serif';
+  ctx.font = '36px Plus Jakarta Sans, sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText(currentFace, center.x + faceOffsetX, center.y + faceOffsetY);
@@ -388,7 +385,7 @@ function animateSquishy() {
 }
 animateSquishy();
 
-// --- LOGICA TASTIERA ---
+// --- TASTIERA ---
 const virtualKeyboard = document.getElementById('virtual-keyboard');
 const rows = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
 let isMouseDown = false;
@@ -412,6 +409,7 @@ rows.forEach(rowStr => {
     };
 
     key.addEventListener('mousedown', trigger);
+    key.addEventListener('touchstart', (e) => { e.preventDefault(); trigger(); });
     key.addEventListener('mouseenter', () => { if (isMouseDown) trigger(); });
     row.appendChild(key);
   });
@@ -427,7 +425,7 @@ document.addEventListener('keyup', (e) => {
   if (k) k.classList.remove('pressed');
 });
 
-// --- LOGICA DISTRIBUTORE ACQUA ---
+// --- ACQUA ---
 const dispenserBtn = document.getElementById('dispenser-btn');
 const resetWaterBtn = document.getElementById('reset-water-btn');
 const waterFill = document.getElementById('water-fill');
@@ -504,11 +502,12 @@ function playWaterPouringSplash(currentLevel) {
   osc.stop(now + 0.04);
 }
 
-dispenserBtn.addEventListener('mousedown', () => {
+function startPouring() {
   resumeAudio();
   waterStream.classList.add('flowing');
   startWaterFlowSound();
 
+  if (fillInterval) clearInterval(fillInterval);
   fillInterval = setInterval(() => {
     if (waterLevel < 100) {
       waterLevel += 1.2;
@@ -519,16 +518,21 @@ dispenserBtn.addEventListener('mousedown', () => {
       }
     }
   }, 45);
-});
+}
 
-window.addEventListener('mouseup', () => {
+function stopPouring() {
   waterStream.classList.remove('flowing');
   stopWaterFlowSound();
   if (fillInterval) {
     clearInterval(fillInterval);
     fillInterval = null;
   }
-});
+}
+
+dispenserBtn.addEventListener('mousedown', startPouring);
+window.addEventListener('mouseup', stopPouring);
+dispenserBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startPouring(); }, { passive: false });
+window.addEventListener('touchend', stopPouring);
 
 resetWaterBtn.addEventListener('click', () => {
   waterLevel = 0;
@@ -536,7 +540,7 @@ resetWaterBtn.addEventListener('click', () => {
   playPopItSound();
 });
 
-// --- LOGICA POP-IT ---
+// --- POP-IT ---
 const bubbleGrid = document.getElementById('bubble-grid');
 const popCountEl = document.getElementById('pop-count');
 let popTotal = 0;
@@ -546,21 +550,26 @@ function generateBubbles() {
   for (let i = 0; i < 32; i++) {
     const b = document.createElement('div');
     b.className = 'bubble';
-    b.addEventListener('click', () => {
+    
+    const popAction = (e) => {
+      e.preventDefault();
       if (!b.classList.contains('popped')) {
         b.classList.add('popped');
         popTotal++;
         popCountEl.innerText = popTotal;
         playPopItSound();
       }
-    });
+    };
+
+    b.addEventListener('click', popAction);
+    b.addEventListener('touchstart', popAction, { passive: false });
     bubbleGrid.appendChild(b);
   }
 }
 generateBubbles();
 document.getElementById('reset-bubbles').addEventListener('click', generateBubbles);
 
-// --- GENERATORE SUONI AMBIENTALI PROCEDURALI ---
+// --- AMBIENT SOUNDS ---
 const ambientNodes = {};
 let rainLoopInterval = null;
 let fireLoopInterval = null;
@@ -684,11 +693,10 @@ document.querySelectorAll('.volume-slider').forEach(slider => {
         fireLoopInterval = null;
       }
     }
-
   });
 });
 
-// --- RESPIRAZIONE GUIDATA ---
+// --- RESPIRAZIONE ---
 const breathCircle = document.getElementById('breath-circle');
 const breathText = document.getElementById('breath-text');
 const startBreathBtn = document.getElementById('start-breath');
@@ -722,16 +730,12 @@ function cycleBreath() {
   }, 4000);
 }
 
-// ==========================================
-// NUOVE FUNZIONALITÀ AGGIUNTE
-// ==========================================
-
-// 1. GIARDINO ZEN VIRTUALE
+// --- GIARDINO ZEN ---
 const zenCanvas = document.getElementById('zen-canvas');
 if (zenCanvas) {
   const zenCtx = zenCanvas.getContext('2d');
-  zenCanvas.width = 300;
-  zenCanvas.height = 300;
+  zenCanvas.width = 280;
+  zenCanvas.height = 280;
 
   zenCtx.fillStyle = '#fde68a';
   zenCtx.fillRect(0, 0, zenCanvas.width, zenCanvas.height);
@@ -741,25 +745,47 @@ if (zenCanvas) {
   for (let y = 30; y < zenCanvas.height; y += 30) {
     zenCtx.beginPath();
     zenCtx.moveTo(0, y);
-    zenCtx.bezierCurveTo(75, y - 15, 225, y + 15, 300, y);
+    zenCtx.bezierCurveTo(70, y - 15, 210, y + 15, 280, y);
     zenCtx.stroke();
   }
 
   let isRaking = false;
-  zenCanvas.addEventListener('mousedown', (e) => { isRaking = true; rakeSand(e); });
-  zenCanvas.addEventListener('mousemove', (e) => { if (isRaking) rakeSand(e); });
-  window.addEventListener('mouseup', () => isRaking = false);
+  
+  function startRake(clientX, clientY) {
+    isRaking = true;
+    rakeAt(clientX, clientY);
+  }
 
-  function rakeSand(e) {
+  function moveRake(clientX, clientY) {
+    if (isRaking) rakeAt(clientX, clientY);
+  }
+
+  function rakeAt(clientX, clientY) {
     const rect = zenCanvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
     zenCtx.strokeStyle = '#d97706';
     zenCtx.lineWidth = 5;
     zenCtx.beginPath();
     zenCtx.arc(x, y, 12, 0, Math.PI * 2);
     zenCtx.stroke();
   }
+
+  zenCanvas.addEventListener('mousedown', (e) => startRake(e.clientX, e.clientY));
+  zenCanvas.addEventListener('mousemove', (e) => moveRake(e.clientX, e.clientY));
+  window.addEventListener('mouseup', () => isRaking = false);
+
+  zenCanvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (e.touches.length > 0) startRake(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: false });
+
+  zenCanvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    if (e.touches.length > 0) moveRake(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: false });
+
+  window.addEventListener('touchend', () => isRaking = false);
 
   document.getElementById('reset-zen')?.addEventListener('click', () => {
     zenCtx.fillStyle = '#fde68a';
@@ -769,14 +795,14 @@ if (zenCanvas) {
     for (let y = 30; y < zenCanvas.height; y += 30) {
       zenCtx.beginPath();
       zenCtx.moveTo(0, y);
-      zenCtx.bezierCurveTo(75, y - 15, 225, y + 15, 300, y);
+      zenCtx.bezierCurveTo(70, y - 15, 210, y + 15, 280, y);
       zenCtx.stroke();
     }
     playPopItSound();
   });
 }
 
-// 2. GLOCKENSPIEL / NOTE MUSICALI
+// --- GLOCKENSPIEL ---
 function playGlockNote(freq) {
   resumeAudio();
   const now = audioCtx.currentTime;
@@ -795,15 +821,17 @@ function playGlockNote(freq) {
 }
 
 document.querySelectorAll('.glock-key').forEach(key => {
-  key.addEventListener('mousedown', () => {
+  const triggerNote = () => {
     const freq = parseFloat(key.dataset.freq);
     playGlockNote(freq);
     key.style.transform = 'scale(0.95)';
     setTimeout(() => key.style.transform = 'scale(1)', 120);
-  });
+  };
+  key.addEventListener('mousedown', triggerNote);
+  key.addEventListener('touchstart', (e) => { e.preventDefault(); triggerNote(); });
 });
 
-// 3. CIELO STELLATO / PARTICELLE
+// --- CIELO STELLATO ---
 const starCanvas = document.getElementById('star-canvas');
 if (starCanvas) {
   const starCtx = starCanvas.getContext('2d');
@@ -811,11 +839,16 @@ if (starCanvas) {
   starCanvas.height = window.innerHeight;
   let particles = [];
 
-  window.addEventListener('mousemove', (e) => {
+  window.addEventListener('resize', () => {
+    starCanvas.width = window.innerWidth;
+    starCanvas.height = window.innerHeight;
+  });
+
+  function addParticles(x, y) {
     for (let i = 0; i < 3; i++) {
       particles.push({
-        x: e.clientX,
-        y: e.clientY,
+        x: x,
+        y: y,
         vx: (Math.random() - 0.5) * 2,
         vy: (Math.random() - 0.5) * 2,
         size: Math.random() * 4 + 2,
@@ -823,7 +856,17 @@ if (starCanvas) {
         color: ['#f472b6', '#38bdf8', '#fbbf24', '#c084fc'][Math.floor(Math.random() * 4)]
       });
     }
+  }
+
+  window.addEventListener('mousemove', (e) => {
+    addParticles(e.clientX, e.clientY);
   });
+
+  window.addEventListener('touchmove', (e) => {
+    if (e.touches.length > 0) {
+      addParticles(e.touches[0].clientX, e.touches[0].clientY);
+    }
+  }, { passive: true });
 
   function animateStars() {
     starCtx.clearRect(0, 0, starCanvas.width, starCanvas.height);
@@ -849,7 +892,7 @@ if (starCanvas) {
   animateStars();
 }
 
-// 4. AFFERMAZIONI E GRATITUDINE
+// --- AFFERMAZIONI E GRATITUDINE ---
 const affirmations = [
   "Meriti pace, tranquillità e serenità in questo momento.",
   "Ogni respiro ti porta calma e leggerezza.",

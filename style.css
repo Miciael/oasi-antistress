@@ -13,6 +13,7 @@
   padding: 0;
   font-family: 'Plus Jakarta Sans', sans-serif;
   user-select: none;
+  -webkit-user-select: none;
 }
 
 body {
@@ -22,40 +23,42 @@ body {
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  padding: 20px;
+  padding: 15px;
+  overflow-x: hidden;
 }
 
 header {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 header h1 {
   color: var(--primary-pink);
-  font-size: 2.2rem;
+  font-size: 1.8rem;
   font-weight: 700;
 }
 
 header p {
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #64748b;
 }
 
 .navbar {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
   justify-content: center;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
   max-width: 850px;
 }
 
 .nav-item {
   background: white;
   border: none;
-  padding: 10px 18px;
+  padding: 8px 14px;
   border-radius: 20px;
   font-weight: 600;
+  font-size: 0.85rem;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(236, 72, 153, 0.1);
   transition: all 0.2s ease;
@@ -78,7 +81,7 @@ main {
   display: none;
   background: var(--card-bg);
   width: 100%;
-  padding: 30px;
+  padding: 20px;
   border-radius: 24px;
   box-shadow: 0 12px 30px rgba(236, 72, 153, 0.12);
   text-align: center;
@@ -90,23 +93,26 @@ main {
 
 .tab-content h2 {
   color: var(--dark-pink);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  font-size: 1.3rem;
 }
 
 .tab-content p {
-  margin-bottom: 20px;
-  font-size: 0.95rem;
+  margin-bottom: 15px;
+  font-size: 0.85rem;
 }
 
 /* SQUISHY */
 .canvas-container {
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 #squishy-canvas {
   cursor: grab;
+  max-width: 100%;
+  height: auto;
 }
 
 #squishy-canvas:active {
@@ -115,7 +121,7 @@ main {
 
 .face-selector {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   justify-content: center;
   flex-wrap: wrap;
 }
@@ -123,9 +129,10 @@ main {
 .face-btn {
   background: var(--secondary-pink);
   border: none;
-  padding: 8px 14px;
+  padding: 6px 12px;
   border-radius: 12px;
   font-weight: 600;
+  font-size: 0.85rem;
   cursor: pointer;
   transition: background 0.2s;
 }
@@ -135,35 +142,38 @@ main {
   color: white;
 }
 
-/* TASTIERA MECCANICA STILE PASTELLO CREMOSO */
+/* TASTIERA MECCANICA */
 .virtual-keyboard {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
   align-items: center;
-  margin-top: 15px;
+  margin-top: 10px;
   background: #fdf2f8;
-  padding: 20px;
+  padding: 12px;
   border-radius: 20px;
   box-shadow: inset 0 2px 8px rgba(236, 72, 153, 0.08);
+  width: 100%;
 }
 
 .key-row {
   display: flex;
-  gap: 8px;
+  gap: 5px;
+  justify-content: center;
 }
 
 .key {
   background: linear-gradient(135deg, #ffffff 0%, #fbcfe8 100%);
-  width: 42px;
-  height: 48px;
-  border-radius: 12px;
+  width: 32px;
+  height: 40px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
+  font-size: 0.8rem;
   color: #db2777;
-  box-shadow: 0 5px 0 #f472b6, 0 8px 15px rgba(236, 72, 153, 0.15);
+  box-shadow: 0 4px 0 #f472b6, 0 6px 10px rgba(236, 72, 153, 0.15);
   cursor: pointer;
   transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.08s ease;
 }
@@ -174,8 +184,8 @@ main {
 }
 
 .key.pressed {
-  transform: translateY(5px);
-  box-shadow: 0 0 0 #f472b6, 0 2px 5px rgba(236, 72, 153, 0.2);
+  transform: translateY(4px);
+  box-shadow: 0 0 0 #f472b6, 0 1px 3px rgba(236, 72, 153, 0.2);
   background: #ec4899;
   color: white;
 }
@@ -183,11 +193,11 @@ main {
 /* ACQUA */
 .water-scene {
   position: relative;
-  height: 180px;
+  height: 160px;
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .water-stream {
@@ -201,12 +211,12 @@ main {
 }
 
 .water-stream.flowing {
-  height: 120px;
+  height: 105px;
 }
 
 .glass {
-  width: 80px;
-  height: 120px;
+  width: 70px;
+  height: 110px;
   border: 4px solid #cbd5e1;
   border-top: none;
   border-radius: 0 0 16px 16px;
@@ -226,37 +236,39 @@ main {
 
 .water-controls {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
-/* POP-IT ARCOBALENO IN SILICONE */
+/* POP-IT ARCOBALENO */
 .popit-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   font-weight: 600;
+  font-size: 0.9rem;
   color: #be123d;
 }
 
 .bubble-grid {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
-  gap: 12px;
+  gap: 8px;
   justify-items: center;
   background: #fff1f2;
-  padding: 20px;
+  padding: 12px;
   border-radius: 20px;
   box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.04);
 }
 
 .bubble {
-  width: 36px;
-  height: 36px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), inset 0 3px 5px rgba(255, 255, 255, 0.7);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1), inset 0 2px 4px rgba(255, 255, 255, 0.7);
   transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
@@ -279,17 +291,18 @@ main {
 .mixer-grid {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px;
 }
 
 .mixer-card {
   background: #fef1f8;
-  padding: 15px 20px;
-  border-radius: 16px;
+  padding: 12px 15px;
+  border-radius: 14px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   font-weight: 600;
+  font-size: 0.85rem;
   color: var(--dark-pink);
 }
 
@@ -304,27 +317,28 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 200px;
-  margin-bottom: 15px;
+  height: 160px;
+  margin-bottom: 10px;
 }
 
 .breath-circle {
-  width: 120px;
-  height: 120px;
+  width: 110px;
+  height: 110px;
   background: var(--secondary-pink);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
+  font-size: 0.9rem;
   color: var(--dark-pink);
   box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.4);
   transition: transform 4s ease-in-out, box-shadow 4s ease-in-out;
 }
 
 .breath-circle.expand {
-  transform: scale(1.6);
-  box-shadow: 0 0 0 35px rgba(236, 72, 153, 0.15);
+  transform: scale(1.5);
+  box-shadow: 0 0 0 25px rgba(236, 72, 153, 0.15);
   background: var(--primary-pink);
   color: white;
 }
@@ -335,25 +349,29 @@ main {
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
   cursor: crosshair;
   background: #fde68a;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
+  touch-action: none;
+  max-width: 100%;
+  height: auto;
 }
 
-/* GLOCKENSPIEL / PLACCHE METALLICHE */
+/* GLOCKENSPIEL */
 .glockenspiel-container {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
-  margin-top: 15px;
+  margin-top: 10px;
 }
 
 .glock-key {
   background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 50%, #94a3b8 100%);
   color: #1e293b;
-  width: 80%;
-  padding: 14px;
+  width: 90%;
+  padding: 12px;
   border-radius: 8px;
   font-weight: 700;
+  font-size: 0.85rem;
   cursor: pointer;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1), inset 0 2px 3px rgba(255, 255, 255, 0.8);
   transition: transform 0.08s ease, background 0.08s ease;
@@ -372,27 +390,29 @@ main {
 .floating-thought {
   position: absolute;
   background: white;
-  padding: 10px 20px;
+  padding: 8px 16px;
   border-radius: 20px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.1);
   animation: floatUp 4s forwards linear;
   color: var(--dark-pink);
   font-weight: 600;
+  font-size: 0.85rem;
 }
 
 @keyframes floatUp {
   0% { transform: translateY(0); opacity: 1; }
-  100% { transform: translateY(-150px); opacity: 0; }
+  100% { transform: translateY(-120px); opacity: 0; }
 }
 
-/* PULSANTI GENERALI */
+/* PULSANTI */
 .primary-btn {
   background: var(--primary-pink);
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 8px 16px;
   border-radius: 12px;
   font-weight: 600;
+  font-size: 0.85rem;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(236, 72, 153, 0.25);
 }
@@ -405,12 +425,50 @@ main {
   background: #e2e8f0;
   color: #475569;
   border: none;
-  padding: 10px 20px;
+  padding: 8px 16px;
   border-radius: 12px;
   font-weight: 600;
+  font-size: 0.85rem;
   cursor: pointer;
 }
 
 .secondary-btn:hover {
   background: #cbd5e1;
+}
+
+/* ========================================== */
+/* MEDIA QUERY SPECIFICA PER SMARTPHONE        */
+/* ========================================== */
+@media screen and (max-width: 600px) {
+  body {
+    padding: 8px;
+  }
+
+  header h1 {
+    font-size: 1.5rem;
+  }
+
+  .tab-content {
+    padding: 12px;
+    border-radius: 18px;
+  }
+
+  /* Rimpicciolisci leggermente i tasti della tastiera su schermo piccolo per farli stare comodi */
+  .key {
+    width: 27px;
+    height: 36px;
+    font-size: 0.7rem;
+  }
+
+  /* Adatta il pop-it per evitare overflow */
+  .bubble-grid {
+    grid-template-columns: repeat(8, 1fr);
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .bubble {
+    width: 24px;
+    height: 24px;
+  }
 }
