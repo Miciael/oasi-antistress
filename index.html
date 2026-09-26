@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oasi Anti-Stress ASMR</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <h1>🌿 Oasi Anti-Stress</h1>
+    <p>Il tuo spazio sicuro per rilassarti, respirare e giocare</p>
+  </header>
+
+  <nav class="navbar">
+    <button class="nav-item active" data-tab="squishy">🧸 Squishy</button>
+    <button class="nav-item" data-tab="keyboard">⌨️ Tastiera</button>
+    <button class="nav-item" data-tab="water">💧 Acqua</button>
+    <button class="nav-item" data-tab="popit">🫧 Pop-It</button>
+    <button class="nav-item" data-tab="ambient">🌧️ Suoni</button>
+    <button class="nav-item" data-tab="breath">🧘‍♀️ Respirazione</button>
+    <button class="nav-item" data-tab="zen">🧘‍♂️ Giardino Zen</button>
+    <button class="nav-item" data-tab="chimes">🔔 Glockenspiel</button>
+    <button class="nav-item" data-tab="stars">✨ Cielo Magico</button>
+    <button class="nav-item" data-tab="gratitude">🌸 Gratitudine</button>
+  </nav>
+
+  <main>
+    <!-- Scheda Squishy -->
+    <div id="squishy" class="tab-content active">
+      <h2>Zampetta / Squishy Antistress</h2>
+      <p>Trascina o tira i bordi per deformarlo. Rilascia per farlo tornare elastico!</p>
+      <div class="canvas-container">
+        <canvas id="squishy-canvas"></canvas>
+      </div>
+      <div class="face-selector">
+        <button class="face-btn active">😌 Rilassato</button>
+        <button class="face-btn">😊 Felice</button>
+        <button class="face-btn">😴 Sonnolento</button>
+        <button class="face-btn">🤩 Adorabile</button>
+      </div>
+    </div>
+
+    <!-- Scheda Tastiera -->
+    <div id="keyboard" class="tab-content">
+      <h2>Tastiera Meccanica Ultra-Cremosa</h2>
+      <p>Scrivi sulla tastiera o clicca i tasti per un suono vellutato e soddisfacente.</p>
+      <div id="virtual-keyboard" class="virtual-keyboard"></div>
+    </div>
+
+    <!-- Scheda Acqua -->
+    <div id="water" class="tab-content">
+      <h2>Distributore d'Acqua Rilassante</h2>
+      <p>Tieni premuto il pulsante per versare l'acqua nel bicchiere.</p>
+      <div class="water-scene">
+        <div id="water-stream" class="water-stream"></div>
+        <div class="glass">
+          <div id="water-fill" class="water-fill"></div>
+        </div>
+      </div>
+      <div class="water-controls">
+        <button id="dispenser-btn" class="primary-btn">Tieni premuto per versare 🚰</button>
+        <button id="reset-water-btn" class="secondary-btn">Svuota Bicchiere</button>
+      </div>
+    </div>
+
+    <!-- Scheda Pop-It -->
+    <div id="popit" class="tab-content">
+      <h2>Pop-It in Silicone</h2>
+      <p>Clicca sulle bolle per farle scoppiare con un suono puro in silicone.</p>
+      <div class="popit-header">
+        <span>Bolle scoppiate: <strong id="pop-count">0</strong></span>
+        <button id="reset-bubbles" class="secondary-btn">Rigenera</button>
+      </div>
+      <div id="bubble-grid" class="bubble-grid"></div>
+    </div>
+
+    <!-- Scheda Suoni Ambientali -->
+    <div id="ambient" class="tab-content">
+      <h2>Mixer Sonoro Ambientale</h2>
+      <p>Regola i cursori per creare la tua combinazione di suoni rilassanti.</p>
+      <div class="mixer-grid">
+        <div class="mixer-card">
+          <span>🌧️ Pioggia & Temporale</span>
+          <input type="range" min="0" max="1" step="0.05" value="0" class="volume-slider" data-sound="rain">
+        </div>
+        <div class="mixer-card">
+          <span>🔥 Fuoco Scoppiettante</span>
+          <input type="range" min="0" max="1" step="0.05" value="0" class="volume-slider" data-sound="fire">
+        </div>
+        <div class="mixer-card">
+          <span>🍃 Vento tra gli Alberi</span>
+          <input type="range" min="0" max="1" step="0.05" value="0" class="volume-slider" data-sound="wind">
+        </div>
+        <div class="mixer-card">
+          <span>🌊 Onde del Mare</span>
+          <input type="range" min="0" max="1" step="0.05" value="0" class="volume-slider" data-sound="leaves">
+        </div>
+      </div>
+    </div>
+
+    <!-- Scheda Respirazione -->
+    <div id="breath" class="tab-content">
+      <h2>Esercizio di Respirazione Guidata</h2>
+      <p>Segui il cerchio per ritrovare la calma interiore.</p>
+      <div class="breath-container">
+        <div id="breath-circle" class="breath-circle">
+          <span id="breath-text">Inizia</span>
+        </div>
+      </div>
+      <button id="start-breath" class="primary-btn">Avvia Esercizio</button>
+    </div>
+
+    <!-- Scheda Giardino Zen -->
+    <div id="zen" class="tab-content">
+      <h2>Giardino Zen Virtuale</h2>
+      <p>Passa il mouse o il dito per tracciare linee e onde rilassanti sulla sabbia.</p>
+      <canvas id="zen-canvas"></canvas>
+      <br>
+      <button id="reset-zen" class="primary-btn">Ridisegna Sabbia</button>
+    </div>
+
+    <!-- Scheda Glockenspiel -->
+    <div id="chimes" class="tab-content">
+      <h2>Glockenspiel Armonico</h2>
+      <p>Clicca sulle placche metalliche per suonare le note reali e rilassarti con la musica.</p>
+      <div class="glockenspiel-container">
+        <div class="glock-key" data-freq="261.63">Do (C4)</div>
+        <div class="glock-key" data-freq="293.66">Re (D4)</div>
+        <div class="glock-key" data-freq="329.63">Mi (E4)</div>
+        <div class="glock-key" data-freq="349.23">Fa (F4)</div>
+        <div class="glock-key" data-freq="392.00">Sol (G4)</div>
+        <div class="glock-key" data-freq="440.00">La (A4)</div>
+        <div class="glock-key" data-freq="493.88">Si (B4)</div>
+        <div class="glock-key" data-freq="523.25">Do (C5)</div>
+      </div>
+    </div>
+
+    <!-- Scheda Cielo Stellato -->
+    <div id="stars" class="tab-content">
+      <h2>Cielo Stellato Magico</h2>
+      <p>Muovi il mouse liberamente sullo schermo per lasciare scie di luce soffusa e rilassante.</p>
+      <canvas id="star-canvas" style="position:fixed; top:0; left:0; pointer-events:none; z-index:999;"></canvas>
+    </div>
+
+    <!-- Scheda Gratitudine -->
+    <div id="gratitude" class="tab-content">
+      <h2>Angolo delle Affermazioni & Gratitudine</h2>
+      <div class="card" style="max-width:400px; margin: 0 auto 20px auto; background:white; padding:20px; border-radius:16px;">
+        <p id="affirmation-text" style="font-weight:600; color:#db2777; margin-bottom:15px;">"Meriti pace, tranquillità e serenità in questo momento."</p>
+        <button id="new-affirmation" class="primary-btn">Nuova Frase</button>
+      </div>
+      <div class="card" style="max-width:400px; margin: 0 auto; background:white; padding:20px; border-radius:16px;">
+        <input type="text" id="gratitude-input" placeholder="Scrivi un pensiero gentile..." style="width:100%; padding:10px; border:1px solid #fbcfe8; border-radius:10px; margin-bottom:10px;" />
+        <button id="send-gratitude" class="primary-btn">Fai Volare</button>
+      </div>
+      <div id="floating-thoughts"></div>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
