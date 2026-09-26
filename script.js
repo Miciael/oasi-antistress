@@ -11,7 +11,7 @@ navItems.forEach(item => {
   });
 });
 
-// --- AUDIO CONTEXT GLOBALE ---
+// --- AUDIO CONTEXT GLOBALE E SBLOCCO iOS ---
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 function resumeAudio() {
@@ -20,8 +20,14 @@ function resumeAudio() {
   }
 }
 
+['click', 'touchstart'].forEach(eventType => {
+  document.addEventListener(eventType, () => {
+    resumeAudio();
+  }, { once: false });
+});
+
 // ==========================================
-// SINTETIZZATORI AUDIO PROCEDURALI AVANZATI
+// SINTETIZZATORI AUDIO PROCEDURALI
 // ==========================================
 
 function playSquishySound() {
@@ -215,215 +221,219 @@ function playPopItSound() {
 
 // --- SQUISHY ---
 const canvas = document.getElementById('squishy-canvas');
-const ctx = canvas.getContext('2d');
-canvas.width = 260;
-canvas.height = 260;
+if (canvas) {
+  const ctx = canvas.getContext('2d');
+  canvas.width = 260;
+  canvas.height = 260;
 
-const numPoints = 24;
-const baseRadius = 65;
-const center = { x: 130, y: 130 };
-let points = [];
-let isDraggingSquishy = false;
-let currentFace = '😌';
-let mousePos = { x: 130, y: 130 };
-
-for (let i = 0; i < numPoints; i++) {
-  const angle = (i / numPoints) * Math.PI * 2;
-  points.push({
-    x: center.x + Math.cos(angle) * baseRadius,
-    y: center.y + Math.sin(angle) * baseRadius,
-    ox: center.x + Math.cos(angle) * baseRadius,
-    oy: center.y + Math.sin(angle) * baseRadius
-  });
-}
-
-document.querySelectorAll('.face-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.face-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentFace = btn.innerText.split(' ')[0];
-  });
-});
-
-canvas.addEventListener('mousedown', (e) => {
-  const rect = canvas.getBoundingClientRect();
-  isDraggingSquishy = true;
-  updateMousePos(e.clientX - rect.left, e.clientY - rect.top);
-  playSquishySound();
-});
-
-canvas.addEventListener('mousemove', (e) => {
-  if (isDraggingSquishy) {
-    const rect = canvas.getBoundingClientRect();
-    updateMousePos(e.clientX - rect.left, e.clientY - rect.top);
-  }
-});
-
-window.addEventListener('mouseup', () => {
-  if (isDraggingSquishy) {
-    isDraggingSquishy = false;
-    mousePos = { x: center.x, y: center.y };
-    playSquishySound();
-  }
-});
-
-canvas.addEventListener('touchstart', (e) => {
-  const rect = canvas.getBoundingClientRect();
-  isDraggingSquishy = true;
-  const touch = e.touches[0];
-  updateMousePos(touch.clientX - rect.left, touch.clientY - rect.top);
-  playSquishySound();
-  e.preventDefault();
-}, { passive: false });
-
-canvas.addEventListener('touchmove', (e) => {
-  if (isDraggingSquishy) {
-    const rect = canvas.getBoundingClientRect();
-    const touch = e.touches[0];
-    updateMousePos(touch.clientX - rect.left, touch.clientY - rect.top);
-  }
-  e.preventDefault();
-}, { passive: false });
-
-window.addEventListener('touchend', () => {
-  if (isDraggingSquishy) {
-    isDraggingSquishy = false;
-    mousePos = { x: center.x, y: center.y };
-    playSquishySound();
-  }
-});
-
-function updateMousePos(mx, my) {
-  const pullX = mx - center.x;
-  const pullY = my - center.y;
-  let pullDist = Math.sqrt(pullX * pullX + pullY * pullY);
-  
-  const maxLimit = 65;
-  if (pullDist > maxLimit) {
-    const angle = Math.atan2(pullY, pullX);
-    mousePos.x = center.x + Math.cos(angle) * maxLimit;
-    mousePos.y = center.y + Math.sin(angle) * maxLimit;
-  } else {
-    mousePos.x = mx;
-    mousePos.y = my;
-  }
-}
-
-function animateSquishy() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  const pullX = mousePos.x - center.x;
-  const pullY = mousePos.y - center.y;
-  const pullDist = Math.sqrt(pullX * pullX + pullY * pullY);
-  const pullAngle = Math.atan2(pullY, pullX);
-
-  points.forEach((p, i) => {
-    const angle = (i / numPoints) * Math.PI * 2;
-    let targetX = p.ox;
-    let targetY = p.oy;
-
-    if (isDraggingSquishy && pullDist > 1) {
-      const angleDiff = Math.abs(Math.atan2(Math.sin(angle - pullAngle), Math.cos(angle - pullAngle)));
-      
-      if (angleDiff < Math.PI / 2) {
-        const factor = 1 - (angleDiff / (Math.PI / 2));
-        targetX += Math.cos(pullAngle) * (pullDist * factor * 0.9);
-        targetY += Math.sin(pullAngle) * (pullDist * factor * 0.9);
-      } else {
-        const factor = (angleDiff - Math.PI / 2) / (Math.PI / 2);
-        targetX -= Math.cos(pullAngle) * (pullDist * factor * 0.2);
-        targetY -= Math.sin(pullAngle) * (pullDist * factor * 0.2);
-      }
-    }
-
-    p.x += (targetX - p.x) * 0.25;
-    p.y += (targetY - p.y) * 0.25;
-  });
-
-  ctx.beginPath();
-  const shadowScale = isDraggingSquishy ? 0.85 : 1.0;
-  ctx.ellipse(center.x, center.y + 70, 55 * shadowScale, 12, 0, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.moveTo((points[0].x + points[numPoints - 1].x) / 2, (points[0].y + points[numPoints - 1].y) / 2);
+  const numPoints = 24;
+  const baseRadius = 65;
+  const center = { x: 130, y: 130 };
+  let points = [];
+  let isDraggingSquishy = false;
+  let currentFace = '😌';
+  let mousePos = { x: 130, y: 130 };
 
   for (let i = 0; i < numPoints; i++) {
-    const current = points[i];
-    const next = points[(i + 1) % numPoints];
-    const xc = (current.x + next.x) / 2;
-    const yc = (current.y + next.y) / 2;
-    ctx.quadraticCurveTo(current.x, current.y, xc, yc);
+    const angle = (i / numPoints) * Math.PI * 2;
+    points.push({
+      x: center.x + Math.cos(angle) * baseRadius,
+      y: center.y + Math.sin(angle) * baseRadius,
+      ox: center.x + Math.cos(angle) * baseRadius,
+      oy: center.y + Math.sin(angle) * baseRadius
+    });
   }
 
-  const grad = ctx.createRadialGradient(center.x - 20, center.y - 20, 10, center.x, center.y, 75);
-  grad.addColorStop(0, '#fbcfe8');
-  grad.addColorStop(0.6, '#ec4899');
-  grad.addColorStop(1, '#be123d');
+  document.querySelectorAll('.face-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.face-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFace = btn.innerText.split(' ')[0];
+    });
+  });
 
-  ctx.fillStyle = grad;
-  ctx.shadowColor = 'rgba(236, 72, 153, 0.45)';
-  ctx.shadowBlur = 15;
-  ctx.fill();
-  ctx.shadowBlur = 0;
+  canvas.addEventListener('mousedown', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    isDraggingSquishy = true;
+    updateMousePos(e.clientX - rect.left, e.clientY - rect.top);
+    playSquishySound();
+  });
 
-  ctx.beginPath();
-  ctx.ellipse(center.x - 25, center.y - 25, 16, 9, -Math.PI / 4, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-  ctx.fill();
+  canvas.addEventListener('mousemove', (e) => {
+    if (isDraggingSquishy) {
+      const rect = canvas.getBoundingClientRect();
+      updateMousePos(e.clientX - rect.left, e.clientY - rect.top);
+    }
+  });
 
-  const faceOffsetX = (mousePos.x - center.x) * 0.15;
-  const faceOffsetY = (mousePos.y - center.y) * 0.15;
+  window.addEventListener('mouseup', () => {
+    if (isDraggingSquishy) {
+      isDraggingSquishy = false;
+      mousePos = { x: center.x, y: center.y };
+      playSquishySound();
+    }
+  });
 
-  ctx.font = '36px Plus Jakarta Sans, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(currentFace, center.x + faceOffsetX, center.y + faceOffsetY);
+  canvas.addEventListener('touchstart', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    isDraggingSquishy = true;
+    const touch = e.touches[0];
+    updateMousePos(touch.clientX - rect.left, touch.clientY - rect.top);
+    playSquishySound();
+    e.preventDefault();
+  }, { passive: false });
 
-  requestAnimationFrame(animateSquishy);
+  canvas.addEventListener('touchmove', (e) => {
+    if (isDraggingSquishy) {
+      const rect = canvas.getBoundingClientRect();
+      const touch = e.touches[0];
+      updateMousePos(touch.clientX - rect.left, touch.clientY - rect.top);
+    }
+    e.preventDefault();
+  }, { passive: false });
+
+  window.addEventListener('touchend', () => {
+    if (isDraggingSquishy) {
+      isDraggingSquishy = false;
+      mousePos = { x: center.x, y: center.y };
+      playSquishySound();
+    }
+  });
+
+  function updateMousePos(mx, my) {
+    const pullX = mx - center.x;
+    const pullY = my - center.y;
+    let pullDist = Math.sqrt(pullX * pullX + pullY * pullY);
+    
+    const maxLimit = 65;
+    if (pullDist > maxLimit) {
+      const angle = Math.atan2(pullY, pullX);
+      mousePos.x = center.x + Math.cos(angle) * maxLimit;
+      mousePos.y = center.y + Math.sin(angle) * maxLimit;
+    } else {
+      mousePos.x = mx;
+      mousePos.y = my;
+    }
+  }
+
+  function animateSquishy() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const pullX = mousePos.x - center.x;
+    const pullY = mousePos.y - center.y;
+    const pullDist = Math.sqrt(pullX * pullX + pullY * pullY);
+    const pullAngle = Math.atan2(pullY, pullX);
+
+    points.forEach((p, i) => {
+      const angle = (i / numPoints) * Math.PI * 2;
+      let targetX = p.ox;
+      let targetY = p.oy;
+
+      if (isDraggingSquishy && pullDist > 1) {
+        const angleDiff = Math.abs(Math.atan2(Math.sin(angle - pullAngle), Math.cos(angle - pullAngle)));
+        
+        if (angleDiff < Math.PI / 2) {
+          const factor = 1 - (angleDiff / (Math.PI / 2));
+          targetX += Math.cos(pullAngle) * (pullDist * factor * 0.9);
+          targetY += Math.sin(pullAngle) * (pullDist * factor * 0.9);
+        } else {
+          const factor = (angleDiff - Math.PI / 2) / (Math.PI / 2);
+          targetX -= Math.cos(pullAngle) * (pullDist * factor * 0.2);
+          targetY -= Math.sin(pullAngle) * (pullDist * factor * 0.2);
+        }
+      }
+
+      p.x += (targetX - p.x) * 0.25;
+      p.y += (targetY - p.y) * 0.25;
+    });
+
+    ctx.beginPath();
+    const shadowScale = isDraggingSquishy ? 0.85 : 1.0;
+    ctx.ellipse(center.x, center.y + 70, 55 * shadowScale, 12, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo((points[0].x + points[numPoints - 1].x) / 2, (points[0].y + points[numPoints - 1].y) / 2);
+
+    for (let i = 0; i < numPoints; i++) {
+      const current = points[i];
+      const next = points[(i + 1) % numPoints];
+      const xc = (current.x + next.x) / 2;
+      const yc = (current.y + next.y) / 2;
+      ctx.quadraticCurveTo(current.x, current.y, xc, yc);
+    }
+
+    const grad = ctx.createRadialGradient(center.x - 20, center.y - 20, 10, center.x, center.y, 75);
+    grad.addColorStop(0, '#fbcfe8');
+    grad.addColorStop(0.6, '#ec4899');
+    grad.addColorStop(1, '#be123d');
+
+    ctx.fillStyle = grad;
+    ctx.shadowColor = 'rgba(236, 72, 153, 0.45)';
+    ctx.shadowBlur = 15;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    ctx.beginPath();
+    ctx.ellipse(center.x - 25, center.y - 25, 16, 9, -Math.PI / 4, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+    ctx.fill();
+
+    const faceOffsetX = (mousePos.x - center.x) * 0.15;
+    const faceOffsetY = (mousePos.y - center.y) * 0.15;
+
+    ctx.font = '36px Plus Jakarta Sans, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(currentFace, center.x + faceOffsetX, center.y + faceOffsetY);
+
+    requestAnimationFrame(animateSquishy);
+  }
+  animateSquishy();
 }
-animateSquishy();
 
 // --- TASTIERA ---
 const virtualKeyboard = document.getElementById('virtual-keyboard');
-const rows = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
-let isMouseDown = false;
+if (virtualKeyboard) {
+  const rows = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
+  let isMouseDown = false;
 
-document.addEventListener('mousedown', () => isMouseDown = true);
-document.addEventListener('mouseup', () => isMouseDown = false);
+  document.addEventListener('mousedown', () => isMouseDown = true);
+  document.addEventListener('mouseup', () => isMouseDown = false);
 
-rows.forEach(rowStr => {
-  const row = document.createElement('div');
-  row.className = 'key-row';
-  rowStr.split('').forEach(char => {
-    const key = document.createElement('div');
-    key.className = 'key';
-    key.innerText = char;
-    key.id = `key-${char}`;
+  rows.forEach(rowStr => {
+    const row = document.createElement('div');
+    row.className = 'key-row';
+    rowStr.split('').forEach(char => {
+      const key = document.createElement('div');
+      key.className = 'key';
+      key.innerText = char;
+      key.id = `key-${char}`;
 
-    const trigger = () => {
-      key.classList.add('pressed');
-      playSoftThock();
-      setTimeout(() => key.classList.remove('pressed'), 100);
-    };
+      const trigger = () => {
+        key.classList.add('pressed');
+        playSoftThock();
+        setTimeout(() => key.classList.remove('pressed'), 100);
+      };
 
-    key.addEventListener('mousedown', trigger);
-    key.addEventListener('touchstart', (e) => { e.preventDefault(); trigger(); });
-    key.addEventListener('mouseenter', () => { if (isMouseDown) trigger(); });
-    row.appendChild(key);
+      key.addEventListener('mousedown', trigger);
+      key.addEventListener('touchstart', (e) => { e.preventDefault(); trigger(); });
+      key.addEventListener('mouseenter', () => { if (isMouseDown) trigger(); });
+      row.appendChild(key);
+    });
+    virtualKeyboard.appendChild(row);
   });
-  virtualKeyboard.appendChild(row);
-});
 
-document.addEventListener('keydown', (e) => {
-  const k = document.getElementById(`key-${e.key.toUpperCase()}`);
-  if (k) { k.classList.add('pressed'); playSoftThock(); }
-});
-document.addEventListener('keyup', (e) => {
-  const k = document.getElementById(`key-${e.key.toUpperCase()}`);
-  if (k) k.classList.remove('pressed');
-});
+  document.addEventListener('keydown', (e) => {
+    const k = document.getElementById(`key-${e.key.toUpperCase()}`);
+    if (k) { k.classList.add('pressed'); playSoftThock(); }
+  });
+  document.addEventListener('keyup', (e) => {
+    const k = document.getElementById(`key-${e.key.toUpperCase()}`);
+    if (k) k.classList.remove('pressed');
+  });
+}
 
 // --- ACQUA ---
 const dispenserBtn = document.getElementById('dispenser-btn');
@@ -504,14 +514,14 @@ function playWaterPouringSplash(currentLevel) {
 
 function startPouring() {
   resumeAudio();
-  waterStream.classList.add('flowing');
+  if (waterStream) waterStream.classList.add('flowing');
   startWaterFlowSound();
 
   if (fillInterval) clearInterval(fillInterval);
   fillInterval = setInterval(() => {
     if (waterLevel < 100) {
       waterLevel += 1.2;
-      waterFill.style.height = `${waterLevel}%`;
+      if (waterFill) waterFill.style.height = `${waterLevel}%`;
 
       if (Math.random() < 0.8) {
         playWaterPouringSplash(waterLevel);
@@ -521,7 +531,7 @@ function startPouring() {
 }
 
 function stopPouring() {
-  waterStream.classList.remove('flowing');
+  if (waterStream) waterStream.classList.remove('flowing');
   stopWaterFlowSound();
   if (fillInterval) {
     clearInterval(fillInterval);
@@ -529,16 +539,20 @@ function stopPouring() {
   }
 }
 
-dispenserBtn.addEventListener('mousedown', startPouring);
+if (dispenserBtn) {
+  dispenserBtn.addEventListener('mousedown', startPouring);
+  dispenserBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startPouring(); }, { passive: false });
+}
 window.addEventListener('mouseup', stopPouring);
-dispenserBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startPouring(); }, { passive: false });
 window.addEventListener('touchend', stopPouring);
 
-resetWaterBtn.addEventListener('click', () => {
-  waterLevel = 0;
-  waterFill.style.height = '0%';
-  playPopItSound();
-});
+if (resetWaterBtn) {
+  resetWaterBtn.addEventListener('click', () => {
+    waterLevel = 0;
+    if (waterFill) waterFill.style.height = '0%';
+    playPopItSound();
+  });
+}
 
 // --- POP-IT ---
 const bubbleGrid = document.getElementById('bubble-grid');
@@ -546,6 +560,7 @@ const popCountEl = document.getElementById('pop-count');
 let popTotal = 0;
 
 function generateBubbles() {
+  if (!bubbleGrid) return;
   bubbleGrid.innerHTML = '';
   for (let i = 0; i < 32; i++) {
     const b = document.createElement('div');
@@ -556,7 +571,7 @@ function generateBubbles() {
       if (!b.classList.contains('popped')) {
         b.classList.add('popped');
         popTotal++;
-        popCountEl.innerText = popTotal;
+        if (popCountEl) popCountEl.innerText = popTotal;
         playPopItSound();
       }
     };
@@ -567,7 +582,7 @@ function generateBubbles() {
   }
 }
 generateBubbles();
-document.getElementById('reset-bubbles').addEventListener('click', generateBubbles);
+document.getElementById('reset-bubbles')?.addEventListener('click', generateBubbles);
 
 // --- AMBIENT SOUNDS ---
 const ambientNodes = {};
@@ -669,7 +684,9 @@ document.querySelectorAll('.volume-slider').forEach(slider => {
     if (sound === 'rain') {
       if (val > 0 && !rainLoopInterval) {
         rainLoopInterval = setInterval(() => {
-          const rVal = parseFloat(document.querySelector('[data-sound="rain"]').value);
+          const rainSlider = document.querySelector('[data-sound="rain"]');
+          if (!rainSlider) return;
+          const rVal = parseFloat(rainSlider.value);
           if (rVal > 0 && Math.random() < rVal * 0.9) {
             playRainDrop();
           }
@@ -683,7 +700,9 @@ document.querySelectorAll('.volume-slider').forEach(slider => {
     if (sound === 'fire') {
       if (val > 0 && !fireLoopInterval) {
         fireLoopInterval = setInterval(() => {
-          const fVal = parseFloat(document.querySelector('[data-sound="fire"]').value);
+          const fireSlider = document.querySelector('[data-sound="fire"]');
+          if (!fireSlider) return;
+          const fVal = parseFloat(fireSlider.value);
           if (fVal > 0 && Math.random() < fVal * 0.7) {
             playFirePop();
           }
@@ -702,27 +721,29 @@ const breathText = document.getElementById('breath-text');
 const startBreathBtn = document.getElementById('start-breath');
 let isBreathing = false;
 
-startBreathBtn.addEventListener('click', () => {
-  isBreathing = !isBreathing;
-  if (isBreathing) {
-    startBreathBtn.innerText = 'Interrompi';
-    cycleBreath();
-  } else {
-    startBreathBtn.innerText = 'Avvia Esercizio';
-    breathCircle.classList.remove('expand');
-    breathText.innerText = 'Inizia';
-  }
-});
+if (startBreathBtn) {
+  startBreathBtn.addEventListener('click', () => {
+    isBreathing = !isBreathing;
+    if (isBreathing) {
+      startBreathBtn.innerText = 'Interrompi';
+      cycleBreath();
+    } else {
+      startBreathBtn.innerText = 'Avvia Esercizio';
+      if (breathCircle) breathCircle.classList.remove('expand');
+      if (breathText) breathText.innerText = 'Inizia';
+    }
+  });
+}
 
 function cycleBreath() {
   if (!isBreathing) return;
-  breathText.innerText = 'Inspira...';
-  breathCircle.classList.add('expand');
+  if (breathText) breathText.innerText = 'Inspira...';
+  if (breathCircle) breathCircle.classList.add('expand');
 
   setTimeout(() => {
     if (!isBreathing) return;
-    breathText.innerText = 'Espira...';
-    breathCircle.classList.remove('expand');
+    if (breathText) breathText.innerText = 'Espira...';
+    if (breathCircle) breathCircle.classList.remove('expand');
 
     setTimeout(() => {
       if (isBreathing) cycleBreath();
@@ -831,7 +852,7 @@ document.querySelectorAll('.glock-key').forEach(key => {
   key.addEventListener('touchstart', (e) => { e.preventDefault(); triggerNote(); });
 });
 
-// --- CIELO STELLATO ---
+// --- CIELO STELLATO (Attivo solo nella scheda Cielo Magico) ---
 const starCanvas = document.getElementById('star-canvas');
 if (starCanvas) {
   const starCtx = starCanvas.getContext('2d');
@@ -845,6 +866,10 @@ if (starCanvas) {
   });
 
   function addParticles(x, y) {
+    // Controlla se la scheda attiva è proprio quella del Cielo Magico
+    const activeTab = document.querySelector('.tab-content.active');
+    if (!activeTab || activeTab.id !== 'stars') return;
+
     for (let i = 0; i < 3; i++) {
       particles.push({
         x: x,
